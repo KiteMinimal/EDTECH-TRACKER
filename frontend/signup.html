@@ -107,13 +107,22 @@
             });
 
             const result = await response.json();
+            const resEl = document.getElementById('response');
+
             if (response.ok) {
-                document.getElementById('response').textContent = '✅ Signup successful! Redirecting to login...';
+                resEl.style.color = 'green';
+                resEl.innerHTML = '✅ Signup successful! Redirecting to login...';
                 setTimeout(() => {
                     window.location.href = 'login.html';
-                }, 1500); // wait 1.5 seconds before redirecting
+                }, 2000);
             } else {
-                document.getElementById('response').textContent = result.detail || '❌ Signup failed.';
+                if (result.detail === "Username already exists") {
+                    resEl.style.color = '#e67e22';
+                    resEl.innerHTML = `🔁 You are already signed up. <a href="login.html">Click here to login</a>.`;
+                } else {
+                    resEl.style.color = 'red';
+                    resEl.textContent = `❌ ${result.detail}`;
+                }
             }
 
         });

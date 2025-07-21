@@ -7,6 +7,7 @@ from schemas import UserCreate, UserLogin, UserOut
 from passlib.context import CryptContext
 import jwt
 from datetime import datetime, timedelta
+from fastapi.security import OAuth2PasswordBearer
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -54,7 +55,10 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     return {"access_token": token, "token_type": "bearer", "user_id": db_user.id, "role": db_user.role}
 
 # Utility: Get current user (from token)
-def get_current_user(token: str, db: Session = Depends(get_db)):
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")

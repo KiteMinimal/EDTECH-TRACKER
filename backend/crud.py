@@ -5,16 +5,22 @@ from database import get_db
 from models import Assignment, Submission, User
 from schemas import AssignmentCreate, AssignmentOut, SubmissionCreate, SubmissionOut
 from auth import get_current_user
+from fastapi import Request
 
 crud_router = APIRouter()
 
 # ========== Teacher creates assignment ==========
 @crud_router.post("/assignments", response_model=AssignmentOut)
-def create_assignment(
+async def create_assignment(
     assignment: AssignmentCreate,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    print("RAW BODY >>>", await request.body())  # 👈 Logs raw JSON
+    print("Parsed assignment:", assignment)
+    print("Current user:", current_user.username)
+    
     if current_user.role != "teacher":
         raise HTTPException(status_code=403, detail="Only teachers can create assignments")
     new_assignment = Assignment(
