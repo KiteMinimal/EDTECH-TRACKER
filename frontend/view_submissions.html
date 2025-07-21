@@ -1,50 +1,110 @@
-<!-- view_submissions.html - Teacher views student submissions -->
+<!-- view_submissions.html - Teacher views student submissions with professional UI -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>View Submissions</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
+  <meta charset="UTF-8">
+  <title>View Submissions</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(120deg, #f0f4f8, #d9e2ec);
+      margin: 0;
+      padding: 40px;
+    }
 
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    button {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 12px 28px;
+      background-color: #1d72b8;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #155a96;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #f8fafc;
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      border-left: 5px solid #1d72b8;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    #response {
+      text-align: center;
+      color: #e74c3c;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
 <body>
-    <h2>View All Submissions (Teacher Only)</h2>
-    <button onclick="loadSubmissions()">Load Submissions</button>
+  <div class="container">
+    <h2>📄 Student Assignment Submissions</h2>
+    <button onclick="loadSubmissions()">🔍 Load Submissions</button>
     <ul id="submissionList"></ul>
     <p id="response"></p>
+  </div>
 
-    <script>
-        async function loadSubmissions() {
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('role');
+  <script>
+    async function loadSubmissions() {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
 
-            if (role !== 'teacher') {
-                document.getElementById('response').textContent = 'Only teachers can view submissions.';
-                return;
-            }
+      if (role !== 'teacher') {
+        document.getElementById('response').textContent = 'Only teachers can view submissions.';
+        return;
+      }
 
-            const response = await fetch('http://127.0.0.1:8000/submissions', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const result = await response.json();
-            const list = document.getElementById('submissionList');
-            list.innerHTML = '';
-
-            if (response.ok) {
-                result.forEach(sub => {
-                    const item = document.createElement('li');
-                    item.textContent = `Submission ID: ${sub.id}, Assignment ID: ${sub.assignment_id}, Student ID: ${sub.student_id}, Content: ${sub.content}`;
-                    list.appendChild(item);
-                });
-            } else {
-                document.getElementById('response').textContent = result.detail;
-            }
+      const response = await fetch('http://127.0.0.1:8000/submissions', {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-    </script>
-</body>
+      });
 
+      const result = await response.json();
+      const list = document.getElementById('submissionList');
+      list.innerHTML = '';
+
+      if (response.ok) {
+        result.forEach(sub => {
+          const item = document.createElement('li');
+          item.textContent = `📌 Submission #${sub.id} | Assignment: ${sub.assignment_id} | Student: ${sub.student_id} → ${sub.content}`;
+          list.appendChild(item);
+        });
+      } else {
+        document.getElementById('response').textContent = result.detail;
+      }
+    }
+  </script>
+</body>
 </html>
