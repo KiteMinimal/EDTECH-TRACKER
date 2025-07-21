@@ -1,0 +1,46 @@
+<!-- view_submissions.html - Teacher views student submissions -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Submissions</title>
+</head>
+<body>
+  <h2>View All Submissions (Teacher Only)</h2>
+  <button onclick="loadSubmissions()">Load Submissions</button>
+  <ul id="submissionList"></ul>
+  <p id="response"></p>
+
+  <script>
+    async function loadSubmissions() {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+
+      if (role !== 'teacher') {
+        document.getElementById('response').textContent = 'Only teachers can view submissions.';
+        return;
+      }
+
+      const response = await fetch('http://127.0.0.1:8000/submissions', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const result = await response.json();
+      const list = document.getElementById('submissionList');
+      list.innerHTML = '';
+
+      if (response.ok) {
+        result.forEach(sub => {
+          const item = document.createElement('li');
+          item.textContent = `Submission ID: ${sub.id}, Assignment ID: ${sub.assignment_id}, Student ID: ${sub.student_id}, Content: ${sub.content}`;
+          list.appendChild(item);
+        });
+      } else {
+        document.getElementById('response').textContent = result.detail;
+      }
+    }
+  </script>
+</body>
+</html>
