@@ -11,13 +11,44 @@
       body {
         font-family: "Inter", sans-serif;
         background: #f0f4f8;
-        padding: 40px;
         margin: 0;
+        padding: 0;
+      }
+
+      .navbar {
+        background-color: #007bff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 32px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar h1 {
+        color: #fff;
+        font-size: 22px;
+        margin: 0;
+      }
+
+      .navbar-links {
+        display: flex;
+        gap: 20px;
+      }
+
+      .navbar-links a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: opacity 0.2s ease;
+      }
+
+      .navbar-links a:hover {
+        opacity: 0.85;
       }
 
       .container {
         max-width: 900px;
-        margin: auto;
+        margin: 60px auto 30px auto;
         background-color: #fff;
         padding: 30px;
         border-radius: 12px;
@@ -35,6 +66,7 @@
         padding: 16px;
         border-radius: 8px;
         margin-bottom: 15px;
+        background-color: #f9f9f9;
       }
 
       .submission h3 {
@@ -52,16 +84,34 @@
         text-align: center;
         color: #999;
       }
+
+      .error-msg {
+        text-align: center;
+        color: red;
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>
+    <!-- 🌐 Navbar -->
+    <div class="navbar">
+      <h1>📄 View Submissions</h1>
+      <div class="navbar-links">
+        <a href="create_assignment.html">📝 Create Assignment</a>
+        <a href="teacher_dashboard.html">🏠 Dashboard</a>
+        <a href="login.html" onclick="logout()">🚪 Logout</a>
+      </div>
+    </div>
+
+    <!-- 📦 Main Content -->
     <div class="container">
-      <h2>📄 All Student Submissions</h2>
+      <h2>📋 All Student Submissions</h2>
       <div id="submissions-container" class="submissions-list">
         <p class="no-submissions">Loading submissions...</p>
       </div>
     </div>
 
+    <!-- 🧠 Logic -->
     <script>
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
@@ -69,7 +119,7 @@
 
       if (!token || role !== "teacher") {
         container.innerHTML = `
-        <p style="color: red; text-align: center;">
+        <p class="error-msg">
           ⚠️ Unauthorized access. Only teachers can view this page.<br>
           <a href="login.html" style="color: blue;">Go to Login</a>
         </p>`;
@@ -89,18 +139,22 @@
                 const div = document.createElement("div");
                 div.className = "submission";
                 div.innerHTML = `
-                <h3> Submission : #${i + 1}</h3>
-                <h3> Title : ${sub.assignment_title}</h3>
-  <p><strong>Student:</strong> ${sub.student_name}</p>
-  <p><strong>Response:</strong> ${sub.content}</p>
-              `;
+                  <h3>🧾 Submission #${i + 1}</h3>
+                  <p><strong>Title:</strong> ${sub.assignment_title}</p>
+                  <p><strong>Student:</strong> ${sub.student_name}</p>
+                  <p><strong>Response:</strong> ${sub.content}</p>
+                `;
                 container.appendChild(div);
               });
             }
           })
           .catch((err) => {
-            container.innerHTML = `<p style="color: red;">Error fetching submissions.</p>`;
+            container.innerHTML = `<p class="error-msg">❌ Error fetching submissions.</p>`;
           });
+      }
+
+      function logout() {
+        localStorage.clear();
       }
     </script>
   </body>

@@ -96,7 +96,9 @@
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
 
-        if (role !== "student") {
+        if (role === "student") {
+          document.getElementById("navbar").style.display = "flex";
+        } else {
           document.getElementById("assignment-list").innerHTML = `
         <p style="color:red;">❌ Unauthorized. Only students can view this section.</p>
       `;
@@ -154,6 +156,10 @@
 
       function submitAssignment(id) {
         window.location.href = `submit_assignment.html?assignment_id=${id}`;
+      }
+
+      function logout() {
+        localStorage.clear();
       }
 
       loadAssignments();
