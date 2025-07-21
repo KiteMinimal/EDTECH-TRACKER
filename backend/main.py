@@ -10,7 +10,7 @@ app = FastAPI()
 # Allow requests from your frontend origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # ⚠️ Change "*" to your frontend domain in production
+    allow_origins=["https://edtech-tracker.netlify.app","http://localhost:3000"],  # ⚠️ Change "*" to your frontend domain in production
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
