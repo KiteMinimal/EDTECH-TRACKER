@@ -49,10 +49,22 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 @auth_router.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == user.username).first()
+
     if not db_user or not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if db_user.role != user.role:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Role mismatch! You signed up as a '{db_user.role}'. Please login as a '{db_user.role}'."
+        )
+    
     token = create_access_token({"sub": db_user.username, "role": db_user.role})
-    return {"access_token": token, "token_type": "bearer", "user_id": db_user.id, "role": db_user.role}
+    return {
+        "access_token": token, 
+        "token_type": "bearer", 
+        "user_id": db_user.id, 
+        "role": db_user.role}
 
 # Utility: Get current user (from token)
 

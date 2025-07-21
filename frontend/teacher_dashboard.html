@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f3f7fd, #dce9f9);
+      margin: 0;
+      padding: 0;
+    }
+
+    .dashboard {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .button {
+      text-decoration: none;
+      background-color: #007bff;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    #warning {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>📚 Welcome, Teacher!</h1>
+
+    <div id="warning" style="display: none;"></div>
+
+    <div class="button-group" id="teacher-buttons" style="display: none;">
+      <a class="button" href="create_assignment.html">📝 Create Assignment</a>
+      <a class="button" href="view_submissions.html">📄 View Submissions</a>
+    </div>
+  </div>
+
+  <script>
+    const role = localStorage.getItem("role");
+
+    if (role === "teacher") {
+      document.getElementById("teacher-buttons").style.display = "flex";
+    } else {
+      document.getElementById("warning").style.display = "block";
+      document.getElementById("warning").innerHTML = `
+        ⚠️ Unauthorized access. Only teachers can view this page. <br>
+        <a href="login.html" style="color: blue; text-decoration: underline;">Go to Login</a>
+      `;
+    }
+  </script>
+</body>
+</html>
