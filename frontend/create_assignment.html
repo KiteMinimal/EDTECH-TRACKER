@@ -1,0 +1,50 @@
+<!-- create_assignment.html - Teacher creates assignment -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Assignment</title>
+</head>
+<body>
+  <h2>Create Assignment (Teacher Only)</h2>
+  <form id="assignmentForm">
+    <label>Title:</label>
+    <input type="text" id="title" required><br><br>
+
+    <label>Description:</label>
+    <textarea id="description" required></textarea><br><br>
+
+    <button type="submit">Create</button>
+  </form>
+
+  <p id="response"></p>
+
+  <script>
+    const form = document.getElementById('assignmentForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+
+      if (role !== 'teacher') {
+        document.getElementById('response').textContent = 'Only teachers can create assignments.';
+        return;
+      }
+
+      const response = await fetch('http://127.0.0.1:8000/assignments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, description })
+      });
+
+      const result = await response.json();
+      document.getElementById('response').textContent = response.ok ? 'Assignment created!' : result.detail;
+    });
+  </script>
+</body>
+</html>
