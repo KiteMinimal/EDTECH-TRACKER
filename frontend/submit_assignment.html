@@ -128,7 +128,7 @@
         return;
       }
 
-      const res = await fetch(`http://127.0.0.1:8000/assignments/${assignment_id}`, {
+      const res = await fetch(`https://edtech-tracker.onrender.com/assignments/${assignment_id}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -151,7 +151,7 @@
       e.preventDefault();
       const content = document.getElementById("content").value;
 
-      const res = await fetch("http://127.0.0.1:8000/submissions", {
+      const res = await fetch("https://edtech-tracker.onrender.com/submissions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
