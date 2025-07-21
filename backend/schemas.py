@@ -47,6 +47,8 @@ class SubmissionOut(BaseModel):
     content: str
     assignment_id: int
     student_id: int
+    assignment_title: str
+    student_name: str
 
     class Config:
         orm_mode = True

@@ -1,110 +1,107 @@
-<!-- view_submissions.html - Teacher views student submissions with professional UI -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>View Submissions</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(120deg, #f0f4f8, #d9e2ec);
-      margin: 0;
-      padding: 40px;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background-color: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      color: #2c3e50;
-      margin-bottom: 30px;
-    }
-
-    button {
-      display: block;
-      margin: 0 auto 20px auto;
-      padding: 12px 28px;
-      background-color: #1d72b8;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #155a96;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      background-color: #f8fafc;
-      margin-bottom: 15px;
-      padding: 15px 20px;
-      border-left: 5px solid #1d72b8;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
-    #response {
-      text-align: center;
-      color: #e74c3c;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>📄 Student Assignment Submissions</h2>
-    <button onclick="loadSubmissions()">🔍 Load Submissions</button>
-    <ul id="submissionList"></ul>
-    <p id="response"></p>
-  </div>
-
-  <script>
-    async function loadSubmissions() {
-      const token = localStorage.getItem('token');
-      const role = localStorage.getItem('role');
-
-      if (role !== 'teacher') {
-        document.getElementById('response').textContent = 'Only teachers can view submissions.';
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <title>View Submissions</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f0f4f8;
+        padding: 40px;
+        margin: 0;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/submissions', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      .container {
+        max-width: 900px;
+        margin: auto;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
 
-      const result = await response.json();
-      const list = document.getElementById('submissionList');
-      list.innerHTML = '';
+      h2 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 25px;
+      }
 
-      if (response.ok) {
-        result.forEach(sub => {
-          const item = document.createElement('li');
-          item.textContent = `📌 Submission #${sub.id} | Assignment: ${sub.assignment_id} | Student: ${sub.student_id} → ${sub.content}`;
-          list.appendChild(item);
-        });
+      .submission {
+        border: 1px solid #ccc;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
+
+      .submission h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #007bff;
+      }
+
+      .submission p {
+        margin: 5px 0;
+        color: #333;
+      }
+
+      .no-submissions {
+        text-align: center;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📄 All Student Submissions</h2>
+      <div id="submissions-container" class="submissions-list">
+        <p class="no-submissions">Loading submissions...</p>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      const container = document.getElementById("submissions-container");
+
+      if (!token || role !== "teacher") {
+        container.innerHTML = `
+        <p style="color: red; text-align: center;">
+          ⚠️ Unauthorized access. Only teachers can view this page.<br>
+          <a href="login.html" style="color: blue;">Go to Login</a>
+        </p>`;
       } else {
-        document.getElementById('response').textContent = result.detail;
+        fetch("http://127.0.0.1:8000/submissions", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.length === 0) {
+              container.innerHTML = `<p class="no-submissions">No submissions yet.</p>`;
+            } else {
+              container.innerHTML = "";
+              data.forEach((sub, i) => {
+                const div = document.createElement("div");
+                div.className = "submission";
+                div.innerHTML = `
+                <h3> Submission : #${i + 1}</h3>
+                <h3> Title : ${sub.assignment_title}</h3>
+  <p><strong>Student:</strong> ${sub.student_name}</p>
+  <p><strong>Response:</strong> ${sub.content}</p>
+              `;
+                container.appendChild(div);
+              });
+            }
+          })
+          .catch((err) => {
+            container.innerHTML = `<p style="color: red;">Error fetching submissions.</p>`;
+          });
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
