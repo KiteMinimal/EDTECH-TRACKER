@@ -1,50 +1,55 @@
 <!-- submit_assignment.html - Student submits assignment -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Submit Assignment</title>
+    <meta charset="UTF-8">
+    <title>Submit Assignment</title>
+    <link rel="stylesheet" href="styles.css">
+
 </head>
+
 <body>
-  <h2>Submit Assignment (Student Only)</h2>
-  <form id="submitForm">
-    <label>Assignment ID:</label>
-    <input type="number" id="assignment_id" required><br><br>
+    <h2>Submit Assignment (Student Only)</h2>
+    <form id="submitForm">
+        <label>Assignment ID:</label>
+        <input type="number" id="assignment_id" required><br><br>
 
-    <label>Content:</label>
-    <textarea id="content" required></textarea><br><br>
+        <label>Content:</label>
+        <textarea id="content" required></textarea><br><br>
 
-    <button type="submit">Submit</button>
-  </form>
+        <button type="submit">Submit</button>
+    </form>
 
-  <p id="response"></p>
+    <p id="response"></p>
 
-  <script>
-    const form = document.getElementById('submitForm');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const assignment_id = parseInt(document.getElementById('assignment_id').value);
-      const content = document.getElementById('content').value;
-      const token = localStorage.getItem('token');
-      const role = localStorage.getItem('role');
+    <script>
+        const form = document.getElementById('submitForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const assignment_id = parseInt(document.getElementById('assignment_id').value);
+            const content = document.getElementById('content').value;
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
 
-      if (role !== 'student') {
-        document.getElementById('response').textContent = 'Only students can submit assignments.';
-        return;
-      }
+            if (role !== 'student') {
+                document.getElementById('response').textContent = 'Only students can submit assignments.';
+                return;
+            }
 
-      const response = await fetch('http://127.0.0.1:8000/submissions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ assignment_id, content })
-      });
+            const response = await fetch('http://127.0.0.1:8000/submissions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ assignment_id, content })
+            });
 
-      const result = await response.json();
-      document.getElementById('response').textContent = response.ok ? 'Assignment submitted!' : result.detail;
-    });
-  </script>
+            const result = await response.json();
+            document.getElementById('response').textContent = response.ok ? 'Assignment submitted!' : result.detail;
+        });
+    </script>
 </body>
+
 </html>
